@@ -12,8 +12,24 @@ var removeInstance = function () {
       body_j = JSON.parse(body)
       var services = body_j.data;
       for(var i = 0; i < services.length; i++){
-        if((date-Date.parse(services[i].created)) > 180000){
-          console.log('delete '+services[i].id);
+        if((date-Date.parse(services[i].created)) > 100000){
+          //console.log('delete '+services[i].id);
+          request.del({url: 'http://117.50.1.134:8080/v2-beta/projects/1a3504/services/'+services[i].id}, function (err, httpResponse, body) {
+            if(err){
+              console.log('Internal error.');
+            }
+          })
+        }
+      }
+    })
+    request.get({url:'http://117.50.1.134:8080/v2-beta/projects/1a3504/containers/'},function (err,httpResponse,body) {
+      var date = new Date();
+      body_j = JSON.parse(body)
+      var containers = body_j.data;
+
+      for(var i = 0; i < containers.length; i++){
+        if((date-Date.parse(containers[i].created)) > 100000 && containers[i].labels.container_type == 'cloudware'){
+          //console.log('delete '+containers[i].id);
           request.del({url: 'http://117.50.1.134:8080/v2-beta/projects/1a3504/services/'+services[i].id}, function (err, httpResponse, body) {
             if(err){
               console.log('Internal error.');
@@ -23,6 +39,6 @@ var removeInstance = function () {
       }
     })
     removeInstance()
-  },30000)
+  },100000)
 }
 removeInstance()
